@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Space Grotesk", "Arial", sans-serif;
+  --font-body: "Inter", "Arial", sans-serif;
+  --font-mono: "JetBrains Mono", "Courier New", monospace;
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  background-color: #0f1b2d;
+  color: #f4efe4;
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+::selection {
+  background-color: #d98b4b;
+  color: #0f1b2d;
+}
+
+/* Visible keyboard focus everywhere */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #d98b4b;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Thin custom scrollbar to match the drafting-sheet feel */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0f1b2d;
+}
+::-webkit-scrollbar-thumb {
+  background: #21385a;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2c4773;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
