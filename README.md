@@ -1,62 +1,46 @@
 # Faeze Naghavi — Portfolio (Next.js)
 
-پورتفولیوی شخصی فائزه نقوی، ساخته‌شده با Next.js 16 (App Router) + TypeScript + Tailwind CSS، با انیمیشن GSAP و یک ویژوال سیگنیچر سه‌بعدی با Three.js در هیرو.
+Faeze Naghavi's personal portfolio, built with Next.js 16 (App Router) + TypeScript + Tailwind CSS, with GSAP animation and a 3D visual signature with Three.js in Hero.
 
-## اجرای پروژه روی سیستم خودتان
+## Run the project on your system
 
 ```bash
 npm install
 npm run dev
 ```
 
-سپس آدرس `http://localhost:3000` را در مرورگر باز کنید.
+Then open the address `http://localhost:3000` in the browser.
 
-برای ساخت نسخه نهایی (Production Build):
+To build the final version (Production Build):
 
 ```bash
 npm run build
 npm start
 ```
 
-## ساختار پروژه
+## Project structure
 
 ```
 app/
-  layout.tsx        ← متادیتا، فونت‌ها (Space Grotesk / Inter / JetBrains Mono)
-  page.tsx           ← چیدمان نهایی صفحه (همه بخش‌ها کنار هم)
-  globals.css        ← استایل‌های پایه و توکن‌های رنگی
+layout.tsx ← Metadata, fonts (Space Grotesk / Inter / JetBrains Mono)
+page.tsx ← Final page layout (all sections together)
+globals.css ← Base styles and color tokens
 components/
-  Hero.tsx           ← بخش معرفی + صحنه Three.js + انیمیشن ورود GSAP
-  Reveal.tsx          ← انیمیشن ظاهر شدن هنگام اسکرول (GSAP ScrollTrigger)
-  Nav.tsx, About.tsx, Skills.tsx, Work.tsx, Experience.tsx, Contact.tsx, Footer.tsx
-  BlueprintGrid.tsx   ← پس‌زمینه گرید بلوپرینت
-  PlateLabel.tsx      ← برچسب «PLATE — XX» بالای هر بخش
+Hero.tsx ← Introduction section + Three.js scene + GSAP login animation
+Reveal.tsx ← Scrolling animation (GSAP ScrollTrigger)
+Nav.tsx, About.tsx, Skills.tsx, Work.tsx, Experience.tsx, Contact.tsx, Footer.tsx
+BlueprintGrid.tsx ← Blueprint grid background
+PlateLabel.tsx ← “PLATE — XX” label above each section
 lib/
-  data.ts             ← تمام محتوای متنی (مهارت‌ها، پروژه‌ها، تجربه) — اینجا را برای ویرایش محتوا باز کنید
+data.ts ← All text content (Skills, Projects, Experience) — go here for Open Content Editor
 ```
 
-## شخصی‌سازی محتوا
+## Content Personalization
 
-برای تغییر هر بخشی از متن (مهارت‌ها، پروژه‌ها، تجربه کاری، ایمیل)، فقط کافی است فایل `lib/data.ts` را ویرایش کنید؛ کامپوننت‌ها به‌صورت خودکار محتوای جدید را نمایش می‌دهند.
+To change any part of the text (skills, projects, work experience, email), just edit the `lib/data.ts` file; the components will automatically display the new content.
 
-## نکات مهم قبل از انتشار
+## Accessibility and Performance
 
-- **لینک پروژه‌ها:** فقط پروژه «Cinema Booking Platform» لینک GitHub واقعی دارد. برای بقیه پروژه‌ها («Private client project») اگر بعداً Live Demo یا Repository عمومی ساختید، لینکش را در `lib/data.ts` به فیلد `link` اضافه کنید.
-- **شماره تماس:** عمداً شماره تلفن در صفحه قرار داده نشده تا از اسپم و تماس‌های ناخواسته جلوگیری شود؛ ایمیل و GitHub به‌عنوان راه ارتباطی اصلی استفاده شده‌اند. اگر می‌خواهید شماره را اضافه کنید، آن را به `lib/data.ts` در آبجکت `profile` اضافه و در `Contact.tsx` نمایش دهید.
-- **دامنه فونت:** فونت‌ها از Google Fonts CDN لود می‌شوند؛ اتصال اینترنت عادی کافی است و نیازی به تنظیم خاصی نیست.
-
-## دیپلوی (انتشار آنلاین رایگان)
-
-ساده‌ترین راه استفاده از [Vercel](https://vercel.com) است:
-
-1. پروژه را در یک ریپازیتوری GitHub آپلود کنید
-2. در Vercel با همان حساب GitHub وارد شوید و ریپازیتوری را Import کنید
-3. Vercel به‌صورت خودکار Next.js را تشخیص می‌دهد و دیپلوی می‌کند
-
-بعد از دیپلوی، آدرس Live سایت را در پروفایل Freelancer و سایر شبکه‌های اجتماعی‌تان قرار دهید.
-
-## دسترس‌پذیری و عملکرد
-
-- `prefers-reduced-motion` رعایت شده: اگر کاربر در سیستم‌عاملش انیمیشن کم را فعال کرده باشد، چرخش سه‌بعدی و افکت‌های GSAP غیرفعال می‌شوند.
-- فوکوس کیبورد (Keyboard Focus) روی تمام لینک‌ها و دکمه‌ها قابل مشاهده است.
-- صحنه Three.js به‌درستی در هنگام unmount شدن کامپوننت پاک‌سازی (dispose) می‌شود تا نشتی حافظه ایجاد نکند.
+- `prefers-reduced-motion` respected: 3D rotation and GSAP effects are disabled if the user has reduced animation enabled on their operating system.
+- Keyboard Focus is visible on all links and buttons.
+- Three.js scene is properly disposed when the component is unmounted to avoid memory leaks.
