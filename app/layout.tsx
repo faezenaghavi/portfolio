@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { JsClassProvider } from "./providers"; // یا مسیر درست
+import Nav from "@/components/Nav";
 
 export const metadata: Metadata = {
   title: "Faeze Naghavi — Front-End Developer",
@@ -24,9 +25,10 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {children}
-        <JsClassProvider />
-      </body>
+  <Nav />
+  {children}
+  <JsClassProvider />
+</body>
     </html>
   );
 }

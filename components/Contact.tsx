@@ -5,12 +5,11 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 
-// اگر ایمپورت profile مشکل دارد، مستقیماً مقادیر را اینجا بگذار:
 const profile = {
   name: "Faezeh Naghavi",
   email: "nqwyfayzh@gmail.com",
   location: "Falkenstein, Saxony, DE",
-  github: "https://github.com/your-username", // لینک واقعی GitHub خودت را بده
+  github: "https://github.com/faezenaghavi/", 
 };
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -72,17 +71,21 @@ export default function Contact() {
           { opacity: 0, y: 40, duration: 0.7, ease: "power3.out" },
           "-=0.3"
         )
-        .from(
-          ".contact-link",
-          {
-            opacity: 0,
-            y: 10,
-            stagger: 0.07,
-            duration: 0.5,
-            ease: "power3.out",
-          },
-          "-=0.4"
-        );
+        .fromTo(
+  ".contact-link",
+  {
+    opacity: 0,
+    y: 10,
+  },
+  {
+    opacity: 1,
+    y: 0,
+    stagger: 0.07,
+    duration: 0.5,
+    ease: "power3.out",
+  },
+  "-=0.4"
+);
     }, sectionRef);
 
     return () => ctx.revert();
@@ -187,10 +190,16 @@ export default function Contact() {
 
   return (
     <section
-      id="contact"
-      ref={sectionRef}
-      className="py-24 md:py-40 border-b border-line overflow-hidden"
-    >
+id="contact"
+ref={sectionRef}
+className="
+py-24 
+md:py-40 
+border-b 
+border-line
+overflow-visible
+"
+>
       <div className="mx-auto max-w-sheet px-6 md:px-10">
         <div className="mb-16 md:mb-20">
           <p className="contact-eyebrow font-mono text-xs tracking-widest2 uppercase text-copper mb-5">
@@ -343,23 +352,89 @@ export default function Contact() {
 
           {/* ← اسلاید‌های کنار فرم (email، GitHub، Availability) اینجا هستند */}
           <div className="space-y-3">
-            <a
-              href={`mailto:${profile.email}?subject=${encodeURIComponent("Project Inquiry — Let's Build Something")}&body=${encodeURIComponent("Hi Faeze,\n\nI found your portfolio and would like to discuss a project.\n\nBest regards,")}`}
-              className="contact-link group block border border-copper/30 hover:border-copper bg-copper/5 hover:bg-copper/10 p-7 transition-all duration-300"
-            >
-              <p className="font-mono text-[10px] tracking-widest2 uppercase text-slate mb-3">
-                Or email directly
-              </p>
-              <p className="text-paper text-sm group-hover:text-copper transition-colors break-all leading-relaxed">
-                {profile.email}
-              </p>
-              <div className="mt-4 flex items-center gap-2 font-mono text-[10px] tracking-widest2 uppercase text-copper/60 group-hover:text-copper transition-colors">
-                Open email client
-                <span className="group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform inline-block">
-                  ↗
-                </span>
-              </div>
-            </a>
+           <a
+  href={`https://mail.google.com/mail/?view=cm&fs=1&to=${profile.email}&su=${encodeURIComponent(
+"Project Inquiry — Let's Build Something"
+)}&body=${encodeURIComponent(
+`Hi Faeze,
+
+I found your portfolio and would like to discuss a project.
+
+Best regards,`
+)}`}
+target="_blank"
+rel="noopener noreferrer"
+  className="
+  contact-link
+  group
+  block
+  border
+  border-copper/30
+  hover:border-copper
+  bg-copper/5
+  hover:bg-copper/10
+  p-7
+  transition-all
+  duration-300
+  "
+>
+
+  <p className="
+  font-mono
+  text-[10px]
+  tracking-widest2
+  uppercase
+  text-slate
+  mb-3
+  ">
+    Or email directly
+  </p>
+
+
+  <p className="
+  text-paper
+  text-sm
+  group-hover:text-copper
+  transition-colors
+  break-all
+  leading-relaxed
+  ">
+    {profile.email}
+  </p>
+
+
+  <div
+  className="
+  mt-4
+  flex
+  items-center
+  gap-2
+  font-mono
+  text-[10px]
+  tracking-widest2
+  uppercase
+  text-copper/60
+  group-hover:text-copper
+  transition-colors
+  "
+  >
+
+    Open email client
+
+    <span
+    className="
+    group-hover:translate-x-1
+    group-hover:-translate-y-0.5
+    transition-transform
+    inline-block
+    "
+    >
+      ↗
+    </span>
+
+  </div>
+
+</a>
 
             <a
               href={profile.github}
