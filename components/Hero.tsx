@@ -3,150 +3,147 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { gsap } from "gsap";
+import { SplitText } from "gsap/SplitText";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { profile, stats } from "@/lib/data";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(SplitText, ScrollTrigger);
+}
 
 export default function Hero() {
   const canvasWrapRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const lineRef = useRef<HTMLSpanElement>(null);
+  const headlineRef   = useRef<HTMLHeadingElement>(null);
+  const lineRef       = useRef<HTMLSpanElement>(null);
+  const sectionRef    = useRef<HTMLElement>(null);
 
-  // Three.js signature visual: a wireframe polyhedron, drafted like a
-  // compass sketch, rotating slowly with subtle mouse parallax.
+  /* ── Three.js scene ── */
   useEffect(() => {
     const wrap = canvasWrapRef.current;
     if (!wrap) return;
 
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const W = wrap.clientWidth, H = wrap.clientHeight;
 
-    const width = wrap.clientWidth;
-    const height = wrap.clientHeight;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    const scene    = new THREE.Scene();
+    const camera   = new THREE.PerspectiveCamera(45, W / H, 0.1, 100);
     camera.position.z = 6;
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(width, height);
+    renderer.setSize(W, H);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     wrap.appendChild(renderer.domElement);
 
-    const outerGeometry = new THREE.IcosahedronGeometry(2.1, 1);
-    const outerWireframe = new THREE.WireframeGeometry(outerGeometry);
-    const outerLines = new THREE.LineSegments(
-      outerWireframe,
-      new THREE.LineBasicMaterial({ color: 0xd98b4b, transparent: true, opacity: 0.85 })
-    );
+    const mkLines = (radius: number, detail: number, color: number, opacity: number) => {
+      const geo  = new THREE.IcosahedronGeometry(radius, detail);
+      const wire = new THREE.WireframeGeometry(geo);
+      const mat  = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+      const ls   = new THREE.LineSegments(wire, mat);
+      return { geo, wire, mat, ls };
+    };
 
-    const innerGeometry = new THREE.IcosahedronGeometry(1.3, 0);
-    const innerWireframe = new THREE.WireframeGeometry(innerGeometry);
-    const innerLines = new THREE.LineSegments(
-      innerWireframe,
-      new THREE.LineBasicMaterial({ color: 0x8fa0b5, transparent: true, opacity: 0.5 })
-    );
+    const outer = mkLines(2.1, 1, 0xd98b4b, 0.85);
+    const inner = mkLines(1.3, 0, 0x8fa0b5, 0.50);
 
     const group = new THREE.Group();
-    group.add(outerLines, innerLines);
+    group.add(outer.ls, inner.ls);
     scene.add(group);
 
-    let frameId = 0;
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetRotX = 0;
-    let targetRotY = 0;
+    let frameId = 0, mx = 0, my = 0, trX = 0, trY = 0;
 
-    function handlePointerMove(e: PointerEvent) {
-      const rect = wrap!.getBoundingClientRect();
-      mouseX = (e.clientX - rect.left) / rect.width - 0.5;
-      mouseY = (e.clientY - rect.top) / rect.height - 0.5;
-    }
+    const onPointer = (e: PointerEvent) => {
+      const r = wrap.getBoundingClientRect();
+      mx = (e.clientX - r.left)  / r.width  - 0.5;
+      my = (e.clientY - r.top)   / r.height - 0.5;
+    };
 
-    function animate() {
-      if (!prefersReducedMotion) {
+    const tick = () => {
+      if (!reduced) {
         group.rotation.y += 0.0028;
         group.rotation.x += 0.0008;
-        targetRotX += (mouseY * 0.4 - targetRotX) * 0.04;
-        targetRotY += (mouseX * 0.4 - targetRotY) * 0.04;
-        group.rotation.x += targetRotX * 0.01;
-        group.rotation.y += targetRotY * 0.01;
+        trX += (my * 0.4 - trX) * 0.04;
+        trY += (mx * 0.4 - trY) * 0.04;
+        group.rotation.x += trX * 0.01;
+        group.rotation.y += trY * 0.01;
       }
       renderer.render(scene, camera);
-      frameId = requestAnimationFrame(animate);
-    }
-    animate();
+      frameId = requestAnimationFrame(tick);
+    };
+    tick();
 
-    function handleResize() {
-      if (!wrap) return;
-      const w = wrap.clientWidth;
-      const h = wrap.clientHeight;
-      camera.aspect = w / h;
+    const onResize = () => {
+      const nW = wrap.clientWidth, nH = wrap.clientHeight;
+      camera.aspect = nW / nH;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    }
+      renderer.setSize(nW, nH);
+    };
 
-    window.addEventListener("resize", handleResize);
-    wrap.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("resize", onResize);
+    wrap.addEventListener("pointermove", onPointer);
 
     return () => {
       cancelAnimationFrame(frameId);
-      window.removeEventListener("resize", handleResize);
-      wrap.removeEventListener("pointermove", handlePointerMove);
-      outerGeometry.dispose();
-      outerWireframe.dispose();
-      innerGeometry.dispose();
-      innerWireframe.dispose();
-      (outerLines.material as THREE.Material).dispose();
-      (innerLines.material as THREE.Material).dispose();
+      window.removeEventListener("resize", onResize);
+      wrap.removeEventListener("pointermove", onPointer);
+      [outer, inner].forEach(({ geo, wire, mat }) => {
+        geo.dispose(); wire.dispose(); mat.dispose();
+      });
       renderer.dispose();
-      if (wrap.contains(renderer.domElement)) {
-        wrap.removeChild(renderer.domElement);
-      }
+      if (wrap.contains(renderer.domElement)) wrap.removeChild(renderer.domElement);
     };
   }, []);
 
-  // GSAP entrance: the headline rises in, and the divider line "draws"
-  // left to right like a ruled blueprint line being inked.
+  /* ── GSAP entrance + SplitText ── */
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduced) return;
+
+      const split = SplitText.create(headlineRef.current!, {
+        type: "chars,words",
+        mask: "chars",
+        autoSplit: true,
+      });
+
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.from(".hero-eyebrow", { opacity: 0, y: 12, duration: 0.5 })
+
+      tl.from(".hero-eyebrow", { opacity: 0, y: 14, duration: 0.55 })
         .from(
-          ".hero-word",
-          { opacity: 0, y: 28, stagger: 0.08, duration: 0.7 },
-          "-=0.2"
+          split.chars,
+          { opacity: 0, yPercent: 110, stagger: 0.025, duration: 0.65 },
+          "-=0.25",
         )
-        .from(".hero-sub", { opacity: 0, y: 16, duration: 0.6 }, "-=0.4")
+        .from(".hero-sub", { opacity: 0, y: 18, duration: 0.6 }, "-=0.35")
         .from(
           lineRef.current,
-          { scaleX: 0, transformOrigin: "left center", duration: 0.8 },
-          "-=0.5"
+          { scaleX: 0, transformOrigin: "left center", duration: 0.85, ease: "expo.out" },
+          "-=0.55",
         )
-        .from(
-          ".hero-cta",
-          { opacity: 0, y: 12, stagger: 0.08, duration: 0.5 },
-          "-=0.4"
-        )
-        .from(
-          ".hero-stat",
-          { opacity: 0, y: 10, stagger: 0.08, duration: 0.5 },
-          "-=0.3"
-        )
-        .from(
-          canvasWrapRef.current,
-          { opacity: 0, scale: 0.92, duration: 1 },
-          "-=0.9"
-        );
-    });
+        .from(".hero-cta", { opacity: 0, y: 14, stagger: 0.09, duration: 0.5 }, "-=0.45")
+        .from(".hero-stat", { opacity: 0, y: 12, stagger: 0.08, duration: 0.5 }, "-=0.35")
+        .from(canvasWrapRef.current, { opacity: 0, scale: 0.9, duration: 1.1 }, "-=1.0");
+
+      /* subtle parallax on scroll */
+      gsap.to(canvasWrapRef.current, {
+        yPercent: 18,
+        ease: "none",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1.2,
+        },
+      });
+    }, sectionRef);
+
     return () => ctx.revert();
   }, []);
-
-  const headlineWords = profile.tagline.split(" ");
 
   return (
     <section
       id="top"
-      className="relative pt-40 pb-24 md:pt-48 md:pb-32 border-b border-line"
+      ref={sectionRef}
+      className="relative pt-40 pb-24 md:pt-48 md:pb-32 border-b border-line overflow-hidden"
     >
       <div className="mx-auto max-w-sheet px-6 md:px-10 grid md:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
         <div>
@@ -156,34 +153,27 @@ export default function Hero() {
 
           <h1
             ref={headlineRef}
-            className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.08] text-paper"
+            className="font-display text-4xl sm:text-5xl lg:text-[3.6rem] font-semibold leading-[1.08] text-paper"
           >
-            {headlineWords.map((word, i) => (
-              <span className="hero-word inline-block mr-3" key={i}>
-                {word}
-              </span>
-            ))}
+            {profile.tagline}
           </h1>
 
           <p className="hero-sub mt-7 max-w-md text-slate text-base leading-relaxed">
             {profile.summary}
           </p>
 
-          <span
-            ref={lineRef}
-            className="block h-px bg-line mt-9 mb-9 w-full"
-          />
+          <span ref={lineRef} className="block h-px bg-line mt-9 mb-9 w-full" />
 
           <div className="flex flex-wrap items-center gap-4">
             <a
               href="#work"
-              className="hero-cta font-mono text-xs tracking-widest2 uppercase bg-copper text-ink px-6 py-3 hover:bg-paper transition-colors"
+              className="hero-cta font-mono text-xs tracking-widest2 uppercase bg-copper text-ink px-6 py-3 hover:bg-paper transition-colors duration-300"
             >
               View selected work
             </a>
             <a
-              href={`mailto:${profile.email}`}
-              className="hero-cta font-mono text-xs tracking-widest2 uppercase border border-line text-paper px-6 py-3 hover:border-copper hover:text-copper transition-colors"
+              href={`mailto:${profile.email}?subject=Project Inquiry — Let's Build Something&body=Hi Faeze,%0D%0A%0D%0AI came across your portfolio and would love to discuss a project.%0D%0A%0D%0ABest regards,`}
+              className="hero-cta font-mono text-xs tracking-widest2 uppercase border border-line text-paper px-6 py-3 hover:border-copper hover:text-copper transition-colors duration-300"
             >
               Email me
             </a>
@@ -192,7 +182,7 @@ export default function Hero() {
           <div className="mt-14 grid grid-cols-3 gap-6 max-w-md">
             {stats.map((s) => (
               <div className="hero-stat" key={s.label}>
-                <p className="font-display text-2xl text-paper">{s.value}</p>
+                <p className="font-display text-2xl font-semibold text-paper">{s.value}</p>
                 <p className="font-mono text-[10px] tracking-widest2 uppercase text-slate mt-1 leading-tight">
                   {s.label}
                 </p>

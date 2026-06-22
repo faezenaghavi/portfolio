@@ -3,51 +3,137 @@
 @tailwind utilities;
 
 :root {
-  --font-display: "Space Grotesk", "Arial", sans-serif;
-  --font-body: "Inter", "Arial", sans-serif;
-  --font-mono: "JetBrains Mono", "Courier New", monospace;
+  --font-display: "Clash Display", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --bg: #0a1425;
+  --paper: #f8f1e3;
+  --copper: #c47a5f;
+  --slate: #94a3b8;
+  --line: #1e2a44;
 }
 
-* {
-  scroll-behavior: smooth;
-}
-
-html,
-body {
-  background-color: #0f1b2d;
-  color: #f4efe4;
-}
-
-body {
+html, body {
+  background-color: var(--bg);
+  color: var(--paper);
   font-family: var(--font-body);
 }
 
-::selection {
-  background-color: #d98b4b;
-  color: #0f1b2d;
+.font-display {
+  font-family: var(--font-display);
 }
 
-/* Visible keyboard focus everywhere */
+/* Premium Glass Cards */
+.glass {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.08);
+  box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.5);
+}
+
+/* Enhanced Focus */
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid #d98b4b;
-  outline-offset: 3px;
-  border-radius: 2px;
+  outline: 2px solid var(--copper);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
-/* Thin custom scrollbar to match the drafting-sheet feel */
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f1b2d;
+  background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #21385a;
-  border-radius: 999px;
+  background: #334155;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2c4773;
+  background: var(--copper);
+}
+
+/* ---------- ScrollSmoother required structure ---------- */
+/* Scoped to html.js so the page still scrolls normally (just without
+   the smoothing) if JavaScript fails to load for any reason. */
+html.js #smooth-wrapper {
+  overflow: hidden;
+  position: fixed;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+}
+html.js #smooth-content {
+  overflow: visible;
+  width: 100%;
+}
+
+/* ---------- Custom cursor (fine-pointer devices only) ---------- */
+html.has-custom-cursor,
+html.has-custom-cursor a,
+html.has-custom-cursor button {
+  cursor: none;
+}
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 999px;
+  background: #d98b4b;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+}
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border-radius: 999px;
+  border: 1px solid rgba(217, 139, 75, 0.55);
+  pointer-events: none;
+  z-index: 9998;
+  will-change: transform;
+}
+
+/* ---------- Marquee ticker ---------- */
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker-track {
+  animation: ticker-scroll 28s linear infinite;
+}
+
+/* ---------- Form fields ---------- */
+.field {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #21385a;
+  color: #f4efe4;
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 10px 2px;
+  transition: border-color 0.2s ease;
+}
+.field::placeholder {
+  color: #5e7188;
+}
+.field:focus {
+  outline: none;
+  border-bottom-color: #d98b4b;
 }
 
 @media (prefers-reduced-motion: reduce) {

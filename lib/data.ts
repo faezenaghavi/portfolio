@@ -9,13 +9,11 @@ export const profile = {
     "Front-end developer with 1.5+ years of experience building modern, responsive web applications with React, Next.js, and TypeScript. I work closely with backend and design teams to ship scalable interfaces, connect REST/GraphQL APIs, and optimize performance — with a particular focus on bringing interfaces to life through GSAP animation and Three.js.",
 };
 
-
 export const stats = [
   { value: "1.5+", label: "Years building production UI" },
   { value: "5", label: "Shipped client & product builds" },
   { value: "2", label: "Native languages, EN working fluency" },
 ];
-
 
 export const skillGroups = [
   {
@@ -40,7 +38,6 @@ export const skillGroups = [
   },
 ];
 
-
 export type Project = {
   id: string;
   title: string;
@@ -49,7 +46,6 @@ export type Project = {
   link?: string;
   linkLabel?: string;
 };
-
 
 export const projects: Project[] = [
   {
@@ -86,8 +82,10 @@ export const projects: Project[] = [
     id: "05",
     title: "UrumTrade — Trading Management Dashboard",
     description:
-      "An internal dashboard for managing trading accounts, with advanced form flows, client-side validation, and live data from backend APIs.",
-    tags: ["React.js", "TypeScript", "REST API"],
+      "An internal dashboard for managing trading accounts, built with **Next.js 16** (App Router), featuring advanced form flows, client-side validation, and live data from backend APIs. I contributed collaboratively to the **Frontend section only** for **Arom Sima Company**.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "REST API"],
+    link: "https://github.com/faezenaghavi/urumtrade",
+    linkLabel: "View repository",
   },
   {
     id: "06",
@@ -95,9 +93,10 @@ export const projects: Project[] = [
     description:
       "An e-commerce furniture store website built with Next.js and Tailwind CSS, featuring fabric material selection, product detail customization by users, and an interactive UI for personalizing products before purchase.",
     tags: ["Next.js", "Tailwind CSS", "React.js", "UI/UX", "Product Customization"],
+    link: "https://github.com/faezenaghavi/mobliranian",
+    linkLabel: "View repository",
   },
 ];
-
 
 export const experience = [
   {
@@ -122,7 +121,6 @@ export const experience = [
       "Transitioned into front-end development after completing a biology degree — bringing the same attention to structure and detail to interface work.",
   },
 ];
-
 
 export const strengths = [
   "Fast learner across new tools and stacks",
