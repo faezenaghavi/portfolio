@@ -11,6 +11,8 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(SplitText, ScrollTrigger);
 }
 
+const TO = "nqwyfayzh@gmail.com";
+
 export default function Hero() {
   const canvasWrapRef = useRef<HTMLDivElement>(null);
   const headlineRef   = useRef<HTMLHeadingElement>(null);
@@ -171,8 +173,12 @@ export default function Hero() {
             >
               View selected work
             </a>
+            
+            {/* ✅ اصلاح شده: Gmail مستقیم */}
             <a
-              href={`mailto:${profile.email}?subject=Project Inquiry — Let's Build Something&body=Hi Faeze,%0D%0A%0D%0AI came across your portfolio and would love to discuss a project.%0D%0A%0D%0ABest regards,`}
+              href={`https://mail.google.com/mail?q=mailto:${TO}?subject=${encodeURIComponent("Project Inquiry — Let's Build Something")}&body=${encodeURIComponent("Hi Faeze,\n\nI came across your portfolio and would love to discuss a project.\n\nBest regards,")}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="hero-cta font-mono text-xs tracking-widest2 uppercase border border-line text-paper px-6 py-3 hover:border-copper hover:text-copper transition-colors duration-300"
             >
               Email me

@@ -11,7 +11,7 @@ export const profile = {
 
 export const stats = [
   { value: "1.5+", label: "Years building production UI" },
-  { value: "5", label: "Shipped client & product builds" },
+  { value: "6 ", label: "Shipped client & product builds" },
   { value: "2", label: "Native languages, EN working fluency" },
 ];
 
